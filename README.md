@@ -9,6 +9,8 @@
 
 This is a simple framework to make object detection dataset very quickly !
 
+Let's see an example:
+
 <p align="center">
 <img src="https://user-images.githubusercontent.com/65224852/150709016-6619a8ec-3139-4409-86d4-f004247ebe4a.PNG">
 </p>
