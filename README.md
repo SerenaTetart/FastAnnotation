@@ -9,6 +9,10 @@
 
 This is a simple framework to make object detection dataset very quickly !
 
+<p align="center">
+<img src="https://user-images.githubusercontent.com/65224852/150708927-cce7532b-32a9-43cc-882e-4fac714729d4.PNG">
+</p>
+
 ## Requirements
 
 Use Run.bat to execute the program.
