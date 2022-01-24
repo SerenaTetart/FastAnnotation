@@ -13,6 +13,12 @@ This is a simple framework to make object detection dataset very quickly !
 <img src="https://user-images.githubusercontent.com/65224852/150709016-6619a8ec-3139-4409-86d4-f004247ebe4a.PNG">
 </p>
 
+And this is how the result look:
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/65224852/150709583-b323e8dc-782a-4e06-ae7a-b0b1a275f49a.PNG">
+</p>
+
 ## Requirements
 
 Use Run.bat to execute the program.
