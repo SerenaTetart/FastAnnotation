@@ -20,12 +20,12 @@ Libraries:
 
 ## Setup
 
-**I-** Put all the files to be annoted in '/DataRaw' directory
+**I-** Put all the files to be annoted in '**/DataRaw**' directory
 
 **II-** Launch Run.bat
 
 **III-**
 
-* Push the button **Draw BB** in order to draw a new bounding box, do it for every bounding box.
-* When you are done push the button **Validate** in order to save all the changes in 'annotations.csv'
+* Push the button '**Draw BB**' in order to draw a new bounding box, do it for every bounding box.
+* When you are done push the button '**Validate**' in order to save all the changes in 'annotations.csv'
 * You can navigate freely between all your files and see the bounding boxes already placed.
