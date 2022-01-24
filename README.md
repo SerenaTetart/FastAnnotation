@@ -25,7 +25,7 @@ Libraries:
 **II-** Launch Run.bat
 
 **III-**
-
+* Write in Object Class the name of the class to be asigned to the bounding box.
 * Push the button '**Draw BB**' in order to draw a new bounding box, do it for every bounding box.
 * When you are done push the button '**Validate**' in order to save all the changes in 'annotations.csv'
 * You can navigate freely between all your files and see the bounding boxes already placed.
