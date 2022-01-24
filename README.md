@@ -20,7 +20,7 @@ Libraries:
 
 ## Setup
 
-**I-** Put all the files to be annoted in the '/DataRaw' directory
+**I-** Put all the files to be annoted in '/DataRaw' directory
 
 **II-** Launch Run.bat
 
