@@ -32,9 +32,9 @@ Libraries:
 
 ## Setup
 
-**I-** Put all the files to be annoted in '**/DataRaw**' directory
+**I-** Launch Run.bat
 
-**II-** Launch Run.bat
+**II-** Pick a working directory by clicking on the button with a folder on it.
 
 **III-**
 * Write in Object Class the name of the class to be asigned to the bounding box.
