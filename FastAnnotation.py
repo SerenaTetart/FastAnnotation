@@ -1,4 +1,5 @@
 from tkinter import messagebox
+from tkinter import filedialog
 from PIL import ImageTk, Image
 import tkinter as tk
 import pandas as pd
@@ -6,7 +7,13 @@ import numpy as np
 import PIL
 import os
 
-PATH_ANNOTATION = os.getcwd()
+import xml.etree.ElementTree as gfg
+
+def IsFileImage(fileName):
+    listTypes = ('jpg', 'png', 'bmp')
+    for types in listTypes:
+        if(types in fileName or types.upper() in fileName): return True
+    return False
 
 class Interface(tk.Tk):
     def __init__(self):
@@ -14,32 +21,28 @@ class Interface(tk.Tk):
         self.IndexPhoto = 0
         self.IsDrawing = False
         self.ListFile = []
-        if(not os.path.exists(PATH_ANNOTATION+'/RawData')): os.mkdir(PATH_ANNOTATION+'/RawData')
-        for file in os.listdir(PATH_ANNOTATION+'/RawData/'):
-            self.ListFile.append(file)
+        self.WorkingDir = os.getcwd()
         boolTmp = False
-        for file in os.listdir(PATH_ANNOTATION):
+        for file in os.listdir(os.getcwd()):
             if(file == 'annotations.csv'):
                 self.dataBB = pd.read_csv('annotations.csv')
                 boolTmp = True
         if(not boolTmp):
             self.dataBB = pd.DataFrame(columns=['image', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax'])
-        self.tmpBB = [(-1, -1), (-1, -1)]
-        self.ListBB = []
-        self.ListRect = []
+        self.tmpBB = [(-1, -1), (-1, -1)]; self.ListBB = []; self.ListRect = []
+        self.iconDir = tk.PhotoImage(file='icons/directoryIcon.png')
         self.colorList = ['red', 'blue', 'green', 'yellow', 'brown', 'grey', 'purple', 'pink', 'orange', 'teal']
         
         self.resizable(False,False)
-        self.title('FastAnnotation 0.1')
+        self.title('FastAnnotation 0.2')
         self.protocol("WM_DELETE_WINDOW", self.quit_Button)
         self.geometry('960x540')
+        
          # Widgets
         self.PhotoCanvas = tk.Canvas(self, width=960, height=540, bg='grey')
-         # Grid
         self.PhotoCanvas.pack(fill="both", expand=True)
         
         if(len(self.ListFile) > 0): self.showImage()
-        
         self.open_PanelTab()
         self.bind("<Button-1>", self.drawBB)
        
@@ -53,6 +56,7 @@ class Interface(tk.Tk):
     def open_PanelTab(self):
         global panelTab
         global classEntry
+        global workingDirEntry
         try:
             if(panelTab.state() == "normal"): panelTab.focus()
         except:
@@ -61,8 +65,10 @@ class Interface(tk.Tk):
             panelTab.resizable(False,False)
             
              # Widgets
-            classLabel = tk.Label(panelTab, text="Object Class:")
-            classEntry = tk.Entry(panelTab, width = 20)
+            workingDirButton = tk.Button(panelTab, image=self.iconDir, command=lambda: self.selectWorkingDir(), padx=5, pady=5)
+            workingDirEntry = tk.Entry(panelTab, state='disabled', width = 22)
+            classLabel = tk.Label(panelTab, text="Object class:")
+            classEntry = tk.Entry(panelTab, width = 22)
             lastImage_Button = tk.Button(panelTab, text='<-', command=lambda: self.showLastImage(), padx=5, pady=5)
             deleteImage_Button = tk.Button(panelTab, text='Del', bg='red', command=lambda: self.deleteImage(), padx=5, pady=5)
             nextImage_Button = tk.Button(panelTab, text='->', command=lambda: self.showNextImage(), padx=5, pady=5)
@@ -72,17 +78,34 @@ class Interface(tk.Tk):
             Validate_Button = tk.Button(panelTab, text='Validate', command=lambda: self.validateBB(), padx=5, pady=5)
             
              # Grid
-            classLabel.grid(row=0, column=0)
-            classEntry.grid(row=0, column=1, columnspan=2)
-            DrawBB_Button.grid(row=1, column=0, pady=5)
-            ResetBB_Button.grid(row=1, column=1, pady=5)
-            Validate_Button.grid(row=1, column=2, pady=5)
-            photoLabel.grid(row=2, column=1, pady=5)
-            lastImage_Button.grid(row=3, column=0, pady=5)
-            deleteImage_Button.grid(row=3, column=1, pady=5)
-            nextImage_Button.grid(row=3, column=2, pady=5)
+            workingDirButton.grid(row=0, column=0)
+            workingDirEntry.grid(row=0, column=1, columnspan=2)
+            classLabel.grid(row=1, column=0)
+            classEntry.grid(row=1, column=1, columnspan=2)
+            DrawBB_Button.grid(row=2, column=0, pady=5)
+            ResetBB_Button.grid(row=2, column=1, pady=5)
+            Validate_Button.grid(row=2, column=2, pady=5)
+            photoLabel.grid(row=3, column=1, pady=5)
+            lastImage_Button.grid(row=4, column=0, pady=5)
+            deleteImage_Button.grid(row=4, column=1, pady=5)
+            nextImage_Button.grid(row=4, column=2, pady=5)
             
             panelTab.attributes('-topmost', True)
+            
+    def selectWorkingDir(self):
+        if(self.IsDrawing): self.toggleDrawBB()
+        self.resetBB()
+        tmp = filedialog.askdirectory(title='Select your working directory', initialdir=self.WorkingDir)
+        if(tmp != ""):
+            self.WorkingDir = tmp
+            workingDirEntry.configure(state='normal')
+            workingDirEntry.delete(0,tk.END)
+            workingDirEntry.insert(0,self.WorkingDir)
+            workingDirEntry.configure(state='disabled')
+            self.ListFile = []
+            for file in os.listdir(self.WorkingDir):
+                if(IsFileImage(file)): self.ListFile.append(file)
+            if(len(self.ListFile) > 0): self.showImage()
             
     def toggleDrawBB(self):
         if(not self.IsDrawing):
@@ -123,23 +146,84 @@ class Interface(tk.Tk):
         
     def validateBB(self):
         if(len(self.ListFile) > 0):
-            selection = self.dataBB[self.dataBB['image'] == self.ListFile[self.IndexPhoto]].index
-            self.dataBB.drop(selection, inplace=True)
-            for BB in self.ListBB:
-                width = abs(BB[0][0] - BB[1][0]) # |xmin - xmax|
-                height = abs(BB[0][1] - BB[1][1]) # |ymin - ymax|
-                new_row = {'image':self.ListFile[self.IndexPhoto],
-                        'width':width,
-                        'height':height,
-                        'class':BB[2],
-                        'xmin':BB[0][0], 'ymin':BB[0][1],
-                        'xmax':BB[1][0], 'ymax':BB[1][1]}
-                self.dataBB = self.dataBB.append(new_row, ignore_index=True)
-            self.dataBB.to_csv (PATH_ANNOTATION+'/annotations.csv', index = False, header=True)
+            self.GenerateCSV()
+            self.GenerateXML()
             self.showNextImage()
             
+    def GenerateCSV(self):
+        ''' Generate the CSV file associated to the set of images worked on '''
+        selection = self.dataBB[self.dataBB['image'] == self.ListFile[self.IndexPhoto]].index
+        self.dataBB.drop(selection, inplace=True)
+        for BB in self.ListBB:
+            width = abs(BB[0][0] - BB[1][0]) # |xmin - xmax|
+            height = abs(BB[0][1] - BB[1][1]) # |ymin - ymax|
+            new_row = {'image':self.ListFile[self.IndexPhoto],
+                'width':width,
+                'height':height,
+                'class':BB[2],
+                'xmin':BB[0][0], 'ymin':BB[0][1],
+                'xmax':BB[1][0], 'ymax':BB[1][1]}
+            self.dataBB = self.dataBB.append(new_row, ignore_index=True)
+        self.dataBB.to_csv (os.getcwd()+'/annotations.csv', index = False, header=True)
+            
+    def GenerateXML(self):
+        ''' Generate the XML file associated to the image worked on '''
+        if(not os.path.exists(os.getcwd()+'/XML_Data')): os.mkdir(os.getcwd()+'/XML_Data')
+        root = gfg.Element("annotation")
+        dirTmp = self.WorkingDir[self.WorkingDir.rfind('/')+1::]
+        b1 = gfg.SubElement(root, "folder")
+        b1.text = dirTmp
+        b2 = gfg.SubElement(root, "filename")
+        b2.text = self.ListFile[self.IndexPhoto]
+        b3 = gfg.SubElement(root, "path")
+        b3.text = self.WorkingDir+'/'+self.ListFile[self.IndexPhoto]
+        
+        m1 = gfg.Element("source")
+        root.append(m1)
+        c1 = gfg.SubElement(m1, "database")
+        c1.text = 'Unknown'
+        
+        fileShape = np.array(Image.open(self.WorkingDir+'/'+self.ListFile[self.IndexPhoto])).shape
+        m2 = gfg.Element("size")
+        root.append(m2)
+        d1 = gfg.SubElement(m2, "width")
+        d1.text = str(fileShape[1])
+        d2 = gfg.SubElement(m2, "height")
+        d2.text = str(fileShape[0])
+        d2 = gfg.SubElement(m2, "depth")
+        d2.text = str(fileShape[2])
+        
+        b4 = gfg.SubElement(root, "segmented")
+        b4.text = '0'
+        
+        for BB in self.ListBB:
+            m = gfg.Element("object")
+            root.append(m)
+            e1 = gfg.SubElement(m, "name")
+            e1.text = BB[2]
+            e2 = gfg.SubElement(m, "pose")
+            e2.text = 'Unspecified'
+            e3 = gfg.SubElement(m, "truncated")
+            e3.text = '0'
+            e4 = gfg.SubElement(m, "difficult")
+            e4.text = '0'
+            n = gfg.Element("bndbox")
+            m.append(n)
+            f1 = gfg.SubElement(n, "xmin")
+            f1.text = str(BB[0][0])
+            f2 = gfg.SubElement(n, "ymin")
+            f2.text = str(BB[0][1])
+            f3 = gfg.SubElement(n, "xmax")
+            f3.text = str(BB[1][0])
+            f4 = gfg.SubElement(n, "ymax")
+            f4.text = str(BB[1][1])
+            
+        tree = gfg.ElementTree(root)
+        with open (os.getcwd()+'/XML_Data/'+self.ListFile[self.IndexPhoto]+'.xml', "wb") as files :
+            tree.write(files)
+            
     def showImage(self):
-        img = Image.open(PATH_ANNOTATION+'/RawData/'+self.ListFile[self.IndexPhoto])
+        img = Image.open(self.WorkingDir+'/'+self.ListFile[self.IndexPhoto])
         self.geometry(str(img.size[0])+'x'+str(img.size[1]))
         self.displayedIMG = ImageTk.PhotoImage(image=img)
         self.PhotoCanvas.create_image((0, 0), anchor=tk.NW, image=self.displayedIMG)
@@ -181,14 +265,16 @@ class Interface(tk.Tk):
             self.resetBB()
             selection = self.dataBB[self.dataBB['image'] == self.ListFile[self.IndexPhoto]].index
             self.dataBB.drop(selection, inplace=True)
-            self.dataBB.to_csv (PATH_ANNOTATION+'/annotations.csv', index = False, header=True)
-            os.remove(PATH_ANNOTATION+'/RawData/'+self.ListFile[self.IndexPhoto])
+            self.dataBB.to_csv (os.getcwd()+'/annotations.csv', index = False, header=True)
+            os.remove(self.WorkingDir+'/'+self.ListFile[self.IndexPhoto])
             self.ListFile = []
-            for file in os.listdir(PATH_ANNOTATION+'/RawData/'):
-                self.ListFile.append(file)
+            for file in os.listdir(self.WorkingDir):
+                if(IsFileImage(file)): self.ListFile.append(file)
             if(self.IndexPhoto > len(self.ListFile)-1): self.IndexPhoto = 0
             if(len(self.ListFile) > 0): self.showImage()
-            else: self.PhotoCanvas.delete('all')
+            else:
+                self.PhotoCanvas.delete('all')
+                self.geometry('960x540')
         
     #Main :
 if __name__== "__main__" :
