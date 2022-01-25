@@ -168,7 +168,7 @@ class Interface(tk.Tk):
             
     def GenerateXML(self):
         ''' Generate the XML file associated to the image worked on '''
-        if(not os.path.exists(os.getcwd()+'/XML_Data')): os.mkdir(os.getcwd()+'/XML_Data')
+        if(not os.path.exists(os.getcwd()+'/PascalVOC_XML')): os.mkdir(os.getcwd()+'/PascalVOC_XML')
         root = gfg.Element("annotation")
         dirTmp = self.WorkingDir[self.WorkingDir.rfind('/')+1::]
         b1 = gfg.SubElement(root, "folder")
@@ -219,7 +219,7 @@ class Interface(tk.Tk):
             f4.text = str(BB[1][1])
             
         tree = gfg.ElementTree(root)
-        with open (os.getcwd()+'/XML_Data/'+self.ListFile[self.IndexPhoto]+'.xml', "wb") as files :
+        with open (os.getcwd()+'/PascalVOC_XML/'+self.ListFile[self.IndexPhoto]+'.xml', "wb") as files :
             tree.write(files)
             
     def showImage(self):
