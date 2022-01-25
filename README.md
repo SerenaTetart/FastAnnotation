@@ -19,11 +19,11 @@ Let's see an example:
 
 And this is how the result look:
 
-<p align="center"> <b>CSV File:</b>
+<p align="center">
 <img src="https://user-images.githubusercontent.com/65224852/151023589-bdbdf776-0396-4891-8254-e62636e5e1d2.PNG">
 </p>
 
-<p align="center"> <b>XML File:</b>
+<p align="center">
 <img src="https://user-images.githubusercontent.com/65224852/151024255-47d25847-9b00-4de4-b851-5e7874b48af8.PNG">
 </p>
 
