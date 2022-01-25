@@ -7,9 +7,9 @@
 
 ## General info
 
-This is a simple framework to make object detection dataset very quickly !
+This is a simple framework to make object detection dataset very quickly.
 
-Pascal VOC XML and CSV files are supported. (they are returned each time '**Validate**' button is pressed)
+Pascal VOC XML and CSV files are supported ! *(they are returned each time '**Validate**' button is pressed)*
 
 Let's see an example:
 
