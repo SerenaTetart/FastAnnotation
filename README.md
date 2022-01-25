@@ -23,7 +23,7 @@ And this is how the result look for the CSV File:
 <img src="https://user-images.githubusercontent.com/65224852/151023589-bdbdf776-0396-4891-8254-e62636e5e1d2.PNG">
 </p>
 
-And the result for the XML File:
+And (a part of) the result for the XML File:
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/65224852/151024255-47d25847-9b00-4de4-b851-5e7874b48af8.PNG">
