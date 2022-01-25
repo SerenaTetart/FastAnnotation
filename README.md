@@ -20,7 +20,7 @@ Let's see an example:
 And this is how the result look:
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/65224852/150709583-b323e8dc-782a-4e06-ae7a-b0b1a275f49a.PNG">
+<img src="https://user-images.githubusercontent.com/65224852/151023589-bdbdf776-0396-4891-8254-e62636e5e1d2.PNG">
 </p>
 
 ## Requirements
