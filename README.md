@@ -26,7 +26,7 @@ And this is how the result look for the CSV File:
 And (a part of) the result for the XML File:
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/65224852/151024255-47d25847-9b00-4de4-b851-5e7874b48af8.PNG">
+<img src="https://user-images.githubusercontent.com/65224852/153766142-b6219221-2e4a-4b87-a8b2-dd702612f96e.PNG">
 </p>
 
 ## Requirements
