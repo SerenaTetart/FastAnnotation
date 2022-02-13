@@ -14,7 +14,7 @@ Pascal VOC XML and CSV files are supported ! *(they are returned each time '**Va
 Let's see an example:
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/65224852/151023217-d429bca1-6ff7-407d-b805-455dd2cab384.PNG">
+<img src="https://user-images.githubusercontent.com/65224852/153765830-cb40c53f-22fa-4b54-9b48-c0680fe63c34.PNG">
 </p>
 
 And this is how the result look for the CSV File:
