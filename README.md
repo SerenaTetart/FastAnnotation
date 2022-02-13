@@ -50,5 +50,6 @@ Libraries:
 * Write in Object Class the name of the class to be asigned to the bounding box.
 * Push the button '**Draw BB**' in order to draw a new bounding box, do it for every bounding box.
 * When you are done push the button '**Validate**' or press the key '**Enter**' in order to save all the changes in 'annotations.csv'
-* You can right click on top of a bounding box in order to change his class or remove it.
+* You can drag a bounding box by pressing left click on top of it
+* You can right click on top of a bounding box in order to change his class or remove it
 * You can navigate freely between all your files and see the bounding boxes already placed. *(work with arrow keys)*
