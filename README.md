@@ -20,7 +20,7 @@ Let's see an example:
 And this is how the result look for the CSV File:
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/65224852/151023589-bdbdf776-0396-4891-8254-e62636e5e1d2.PNG">
+<img src="https://user-images.githubusercontent.com/65224852/153766020-78212a29-b3e7-4fb0-8555-0b08515447a6.PNG">
 </p>
 
 And (a part of) the result for the XML File:
