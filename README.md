@@ -7,11 +7,11 @@
 
 ## General info
 
-This is a simple framework to make object detection dataset very quickly.
+This is a simple framework in order to make object detection dataset creation very quick.
 
 Pascal VOC XML and CSV files are supported ! *(they are returned each time '**Validate**' button is pressed)*
 
-Left Arrow, Right Arrow and Enter key work for faster navigation.
+Left Arrow, Right Arrow and Enter key are also supported for faster navigation.
 
 Let's see an example:
 
