@@ -10,7 +10,7 @@ import os
 import xml.etree.ElementTree as gfg
 
 def IsFileImage(fileName):
-    listTypes = ('jpg', 'png', 'bmp')
+    listTypes = ('jpg', 'jpeg', 'png', 'bmp', 'jfif')
     for types in listTypes:
         if(types in fileName or types.upper() in fileName): return True
     return False
@@ -29,22 +29,31 @@ class Interface(tk.Tk):
                 boolTmp = True
         if(not boolTmp):
             self.dataBB = pd.DataFrame(columns=['image', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax'])
-        self.tmpBB = [(-1, -1), (-1, -1)]; self.ListBB = []; self.ListRect = []
+        self.tmpBB = [(-1, -1), (-1, -1)]; self.ListRect = []
         self.iconDir = tk.PhotoImage(file='icons/directoryIcon.png')
-        self.colorList = ['red', 'blue', 'green', 'yellow', 'brown', 'grey', 'purple', 'pink', 'orange', 'teal']
+        self.colorList = ['red', 'blue', 'orange', 'purple', 'brown', 'green', 'pink', 'teal', 'yellow', 'grey']
+        self.selectedRect = 0
         
         self.resizable(False,False)
-        self.title('FastAnnotation 0.2')
+        self.title('FastAnnotation 0.3')
         self.protocol("WM_DELETE_WINDOW", self.quit_Button)
         self.geometry('960x540')
         
          # Widgets
         self.PhotoCanvas = tk.Canvas(self, width=960, height=540, bg='grey')
         self.PhotoCanvas.pack(fill="both", expand=True)
+        self.rightClickMenu = tk.Menu(self, tearoff=0)
+        self.rightClickMenu.add_command(label = "Change class", command=self.chClassBB)
+        self.rightClickMenu.add_command(label = "Delete", command=self.deleteBB)
         
         if(len(self.ListFile) > 0): self.showImage()
         self.open_PanelTab()
-        self.bind("<Button-1>", self.drawBB)
+        self.bind('<Left>', self.leftArrow) #Left Arrow
+        self.bind('<Right>', self.rightArrow)
+        self.bind('<Return>', self.enterKey)
+        self.bind("<Button-1>", self.leftClick)
+        self.bind("<Button-3>", self.rightClick)
+        self.bind("<B1-Motion>", self.dragClick)
        
     def quit_Button(self):
         self.destroy()
@@ -94,9 +103,9 @@ class Interface(tk.Tk):
             
     def selectWorkingDir(self):
         if(self.IsDrawing): self.toggleDrawBB()
-        self.resetBB()
         tmp = filedialog.askdirectory(title='Select your working directory', initialdir=self.WorkingDir)
         if(tmp != ""):
+            self.resetBB()
             self.WorkingDir = tmp
             workingDirEntry.configure(state='normal')
             workingDirEntry.delete(0,tk.END)
@@ -121,28 +130,88 @@ class Interface(tk.Tk):
             self.config(cursor="arrow")
             panelTab.config(cursor="arrow")
             
-    def drawBB(self, event):
-        if(self.IsDrawing):
-            objectClass = classEntry.get()
+    def dragClick(self, event):
+        if(not self.IsDrawing and self.selectedRect[0] != 0):
             x, y = event.x, event.y
+            distx = x - self.posx; disty = y - self.posy
+            self.posx = x; self.posy = y
+            x0, y0, x1, y1 = self.PhotoCanvas.coords(self.selectedRect[0])
+            x2, y2 = self.PhotoCanvas.coords(self.selectedRect[1])
+            self.PhotoCanvas.coords(self.selectedRect[0], x0+distx, y0+disty, x1+distx, y1+disty)
+            self.PhotoCanvas.coords(self.selectedRect[1], x2+distx, y2+disty)
+         
+    def rightClick(self, event):
+        self.selectedRect = [0, 0]
+        x, y = event.x, event.y
+            #Select BB
+        if(not self.IsDrawing):
+            for rect in self.ListRect:
+                x0, y0, x1, y1 = self.PhotoCanvas.coords(rect[0])
+                if(x > x0 and x < x1 and y > y0 and y < y1):
+                    self.selectedRect = rect
+                    self.PhotoCanvas.focus(rect[0])
+                    try:
+                        self.rightClickMenu.tk_popup(self.winfo_rootx()+x+15, self.winfo_rooty()+y-5)
+                    finally:
+                        self.rightClickMenu.grab_release()
+                    break
+         
+    def leftClick(self, event):
+        self.selectedRect = [0, 0]
+        x, y = event.x, event.y #Mouse coord
+        self.posx = x; self.posy = y
+            #Select BB
+        if(not self.IsDrawing):
+            for rect in self.ListRect:
+                x0, y0, x1, y1 = self.PhotoCanvas.coords(rect[0])
+                if(x > x0 and x < x1 and y > y0 and y < y1):
+                    self.selectedRect = rect
+                    self.PhotoCanvas.focus(rect[0])
+                    self.PhotoCanvas.focus(rect[1])
+                    break
+            #Draw BB
+        else:
+            objectClass = classEntry.get()
             if(self.tmpBB[0] == (-1, -1)):
                 self.tmpBB[0] = (x, y)
             elif(self.tmpBB[1] == (-1, -1)):
                 self.tmpBB[1] = (x, y)
                 self.toggleDrawBB() #Stop drawing
-                self.tmpBB.append(objectClass)
-                self.ListBB.append(self.tmpBB)
                 rect = self.PhotoCanvas.create_rectangle(
                     self.tmpBB[0][0], self.tmpBB[0][1],
                     self.tmpBB[1][0], self.tmpBB[1][1], width=2,
-                    outline='black')
-                self.ListRect.append(rect)
+                    outline='black', tags=objectClass)
+                text = self.PhotoCanvas.create_text(self.tmpBB[1][0] - 15, self.tmpBB[1][1] + 5, text=objectClass, font=("Arial", 10), fill='black')
+                self.ListRect.append([rect, text])
             
     def resetBB(self):
-        self.ListBB = []
         for rect in self.ListRect:
-            self.PhotoCanvas.delete(rect)
+            self.PhotoCanvas.delete(rect[0])
+            self.PhotoCanvas.delete(rect[1])
         self.ListRect = []
+        
+    def deleteBB(self):
+        if(self.selectedRect[0] > 0):
+            self.PhotoCanvas.delete(self.selectedRect[0])
+            self.PhotoCanvas.delete(self.selectedRect[1])
+            self.ListRect.remove(self.selectedRect)
+          
+    def chClassBB(self):
+        if(self.selectedRect[0] > 0):
+            objectClass = classEntry.get()
+            if(objectClass == ''): messagebox.showerror('Error', 'No class specified !')
+            else:
+                self.PhotoCanvas.itemconfig(self.selectedRect[0], tag=objectClass)
+                self.PhotoCanvas.itemconfig(self.selectedRect[1], text=objectClass)
+        
+    def leftArrow(self, event):
+        self.showLastImage()
+        
+    def rightArrow(self, event):
+        self.showNextImage()
+        
+    def enterKey(self, event):
+        self.validateBB()
         
     def validateBB(self):
         if(len(self.ListFile) > 0):
@@ -154,15 +223,16 @@ class Interface(tk.Tk):
         ''' Generate the CSV file associated to the set of images worked on '''
         selection = self.dataBB[self.dataBB['image'] == self.ListFile[self.IndexPhoto]].index
         self.dataBB.drop(selection, inplace=True)
-        for BB in self.ListBB:
-            width = abs(BB[0][0] - BB[1][0]) # |xmin - xmax|
-            height = abs(BB[0][1] - BB[1][1]) # |ymin - ymax|
+        fileShape = np.array(Image.open(self.WorkingDir+'/'+self.ListFile[self.IndexPhoto])).shape
+        for rect in self.ListRect:
+            x0, y0, x1, y1 = self.PhotoCanvas.coords(rect[0])
+            objectClass = self.PhotoCanvas.gettags(rect[0])
             new_row = {'image':self.ListFile[self.IndexPhoto],
-                'width':width,
-                'height':height,
-                'class':BB[2],
-                'xmin':BB[0][0], 'ymin':BB[0][1],
-                'xmax':BB[1][0], 'ymax':BB[1][1]}
+                'width':fileShape[1],
+                'height':fileShape[0],
+                'class':objectClass[0],
+                'xmin':x0, 'ymin':y0,
+                'xmax':x1, 'ymax':y1}
             self.dataBB = self.dataBB.append(new_row, ignore_index=True)
         self.dataBB.to_csv (os.getcwd()+'/annotations.csv', index = False, header=True)
             
@@ -196,11 +266,13 @@ class Interface(tk.Tk):
         b4 = gfg.SubElement(root, "segmented")
         b4.text = '0'
         
-        for BB in self.ListBB:
+        for rect in self.ListRect:
+            x0, y0, x1, y1 = self.PhotoCanvas.coords(rect[0])
+            objectClass = self.PhotoCanvas.gettags(rect[0])
             m = gfg.Element("object")
             root.append(m)
             e1 = gfg.SubElement(m, "name")
-            e1.text = BB[2]
+            e1.text = objectClass[0]
             e2 = gfg.SubElement(m, "pose")
             e2.text = 'Unspecified'
             e3 = gfg.SubElement(m, "truncated")
@@ -210,13 +282,13 @@ class Interface(tk.Tk):
             n = gfg.Element("bndbox")
             m.append(n)
             f1 = gfg.SubElement(n, "xmin")
-            f1.text = str(BB[0][0])
+            f1.text = str(x0)
             f2 = gfg.SubElement(n, "ymin")
-            f2.text = str(BB[0][1])
+            f2.text = str(y0)
             f3 = gfg.SubElement(n, "xmax")
-            f3.text = str(BB[1][0])
+            f3.text = str(x1)
             f4 = gfg.SubElement(n, "ymax")
-            f4.text = str(BB[1][1])
+            f4.text = str(y1)
             
         tree = gfg.ElementTree(root)
         with open (os.getcwd()+'/PascalVOC_XML/'+self.ListFile[self.IndexPhoto]+'.xml', "wb") as files :
@@ -239,9 +311,9 @@ class Interface(tk.Tk):
             rect = self.PhotoCanvas.create_rectangle(
                 row['xmin'], row['ymin'],
                 row['xmax'], row['ymax'], width=2,
-                outline=color)
-            self.ListRect.append(rect)
-            self.ListBB.append([(row['xmin'], row['ymin']), (row['xmax'], row['ymax']), row['class']])
+                outline=color, tags=row['class'])
+            text = self.PhotoCanvas.create_text(row['xmax'] - 15, row['ymax'] + 7, text=row['class'], font=("Arial", 10), fill=color)
+            self.ListRect.append([rect, text])
             
     def showNextImage(self):
         if(len(self.ListFile) > 0):
