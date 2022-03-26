@@ -28,7 +28,7 @@ class Interface(tk.Tk):
                 self.dataBB = pd.read_csv('annotations.csv')
                 boolTmp = True
         if(not boolTmp):
-            self.dataBB = pd.DataFrame(columns=['image', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax'])
+            self.dataBB = pd.DataFrame(columns=['image_id', 'width', 'height', 'class', 'x', 'y', 'w', 'h'])
         self.tmpBB = [(-1, -1), (-1, -1)]; self.ListRect = []
         self.iconDir = tk.PhotoImage(file='icons/directoryIcon.png')
         self.colorList = ['red', 'blue', 'orange', 'purple', 'brown', 'green', 'pink', 'teal', 'yellow', 'grey']
@@ -202,7 +202,9 @@ class Interface(tk.Tk):
             if(objectClass == ''): messagebox.showerror('Error', 'No class specified !')
             else:
                 self.PhotoCanvas.itemconfig(self.selectedRect[0], tag=objectClass)
+                self.PhotoCanvas.itemconfig(self.selectedRect[0], outline='black')
                 self.PhotoCanvas.itemconfig(self.selectedRect[1], text=objectClass)
+                self.PhotoCanvas.itemconfig(self.selectedRect[1], fill='black')
         
     def leftArrow(self, event):
         self.showLastImage()
@@ -221,18 +223,18 @@ class Interface(tk.Tk):
             
     def GenerateCSV(self):
         ''' Generate the CSV file associated to the set of images worked on '''
-        selection = self.dataBB[self.dataBB['image'] == self.ListFile[self.IndexPhoto]].index
+        selection = self.dataBB[self.dataBB['image_id'] == self.ListFile[self.IndexPhoto]].index
         self.dataBB.drop(selection, inplace=True)
         fileShape = np.array(Image.open(self.WorkingDir+'/'+self.ListFile[self.IndexPhoto])).shape
         for rect in self.ListRect:
             x0, y0, x1, y1 = self.PhotoCanvas.coords(rect[0])
+            bbox = '['+str(x0)+', '+str(y0)+', '+str(x1)+', '+str(y1)+']'
             objectClass = self.PhotoCanvas.gettags(rect[0])
-            new_row = {'image':self.ListFile[self.IndexPhoto],
+            new_row = {'image_id':self.ListFile[self.IndexPhoto],
                 'width':fileShape[1],
                 'height':fileShape[0],
                 'class':objectClass[0],
-                'xmin':x0, 'ymin':y0,
-                'xmax':x1, 'ymax':y1}
+                'x':x0, 'y':y0, 'w':x1-x0, 'h':y1-y0}
             self.dataBB = self.dataBB.append(new_row, ignore_index=True)
         self.dataBB.to_csv (os.getcwd()+'/annotations.csv', index = False, header=True)
             
@@ -299,7 +301,7 @@ class Interface(tk.Tk):
         self.geometry(str(img.size[0])+'x'+str(img.size[1]))
         self.displayedIMG = ImageTk.PhotoImage(image=img)
         self.PhotoCanvas.create_image((0, 0), anchor=tk.NW, image=self.displayedIMG)
-        selection = self.dataBB[self.dataBB['image'] == self.ListFile[self.IndexPhoto]]
+        selection = self.dataBB[self.dataBB['image_id'] == self.ListFile[self.IndexPhoto]]
         listClass = self.dataBB['class'].unique()
         for index, row in selection.iterrows():
             colorIndex = 0; color = 'black'
@@ -308,11 +310,11 @@ class Interface(tk.Tk):
                     color = self.colorList[colorIndex]
                     break
                 else: colorIndex += 1
+            x0, y0, x1, y1 = row['x'], row['y'], (row['w'] + row['x']), (row['h'] + row['y'])
             rect = self.PhotoCanvas.create_rectangle(
-                row['xmin'], row['ymin'],
-                row['xmax'], row['ymax'], width=2,
+                x0, y0, x1, y1, width=2,
                 outline=color, tags=row['class'])
-            text = self.PhotoCanvas.create_text(row['xmax'] - 15, row['ymax'] + 7, text=row['class'], font=("Arial", 10), fill=color)
+            text = self.PhotoCanvas.create_text(x1 - 15, y1 + 7, text=row['class'], font=("Arial", 10), fill=color)
             self.ListRect.append([rect, text])
             
     def showNextImage(self):
@@ -335,7 +337,7 @@ class Interface(tk.Tk):
         if(len(self.ListFile) > 0):
             if(self.IsDrawing): self.toggleDrawBB()
             self.resetBB()
-            selection = self.dataBB[self.dataBB['image'] == self.ListFile[self.IndexPhoto]].index
+            selection = self.dataBB[self.dataBB['image_id'] == self.ListFile[self.IndexPhoto]].index
             self.dataBB.drop(selection, inplace=True)
             self.dataBB.to_csv (os.getcwd()+'/annotations.csv', index = False, header=True)
             os.remove(self.WorkingDir+'/'+self.ListFile[self.IndexPhoto])
