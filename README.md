@@ -47,7 +47,7 @@ Libraries:
 **II-** Pick a working directory by clicking on the button with a folder on it.
 
 **III-**
-* Write in Object Class the name of the class to be asigned to the bounding box.
+* Write in Object Class the name of the class to be assigned to the bounding box.
 * Push the button '**Draw BB**' in order to draw a new bounding box, do it for every bounding box.
 * When you are done push the button '**Validate**' or press the key '**Enter**' in order to save all the changes in 'annotations.csv'
 * You can drag a bounding box by pressing left click on top of it
