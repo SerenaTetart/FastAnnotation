@@ -180,7 +180,7 @@ class Interface(tk.Tk):
                 self.ListRect.append([rect, text])
                 
     def leftClickRelease(self, event):
-        self.config(cursor="arrow")
+        if(not self.IsDrawing): self.config(cursor="arrow")
                 
     def dragClick(self, event):
         if(not self.IsDrawing and self.selectedRect[0] != 0):
