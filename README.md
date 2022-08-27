@@ -7,7 +7,7 @@
 
 ## General info
 
-This is a simple framework in order to make object detection dataset creation very quick.
+FastAnnotation is a simple framework to make dataset creation very quick.
 
 Pascal VOC XML and CSV files are supported ! *(they are returned each time '**Validate**' button is pressed)*
 
@@ -50,6 +50,6 @@ Libraries:
 * Write in Object Class the name of the class to be assigned to the bounding box.
 * Push the button '**Draw BB**' in order to draw a new bounding box, do it for every bounding box.
 * When you are done push the button '**Validate**' or press the key '**Enter**' in order to save all the changes in 'annotations.csv'
-* You can drag a bounding box by pressing left click on top of it
+* You can drag or resize a bounding box by pressing left click on top of it
 * You can right click on top of a bounding box in order to change its class or remove it
 * You can navigate freely between all your files and see the bounding boxes already placed. *(work with arrow keys)*
