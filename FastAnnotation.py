@@ -22,6 +22,7 @@ class Interface(tk.Tk):
         self.IsDrawing = False
         self.ListFile = []
         self.WorkingDir = os.getcwd()
+        self.rangeResize = 10 #Local variable in px
         boolTmp = False
         for file in os.listdir(os.getcwd()):
             if(file == 'annotations.csv'):
@@ -51,8 +52,9 @@ class Interface(tk.Tk):
         self.bind('<Left>', self.leftArrow) #Left Arrow
         self.bind('<Right>', self.rightArrow)
         self.bind('<Return>', self.enterKey)
-        self.bind("<Button-1>", self.leftClick)
-        self.bind("<Button-3>", self.rightClick)
+        self.bind("<ButtonPress-1>", self.leftClick)
+        self.bind("<ButtonRelease-1>", self.leftClickRelease)
+        self.bind("<ButtonPress-3>", self.rightClick)
         self.bind("<B1-Motion>", self.dragClick)
        
     def quit_Button(self):
@@ -129,16 +131,6 @@ class Interface(tk.Tk):
             self.IsDrawing = False
             self.config(cursor="arrow")
             panelTab.config(cursor="arrow")
-            
-    def dragClick(self, event):
-        if(not self.IsDrawing and self.selectedRect[0] != 0):
-            x, y = event.x, event.y
-            distx = x - self.posx; disty = y - self.posy
-            self.posx = x; self.posy = y
-            x0, y0, x1, y1 = self.PhotoCanvas.coords(self.selectedRect[0])
-            x2, y2 = self.PhotoCanvas.coords(self.selectedRect[1])
-            self.PhotoCanvas.coords(self.selectedRect[0], x0+distx, y0+disty, x1+distx, y1+disty)
-            self.PhotoCanvas.coords(self.selectedRect[1], x2+distx, y2+disty)
          
     def rightClick(self, event):
         self.selectedRect = [0, 0]
@@ -164,7 +156,10 @@ class Interface(tk.Tk):
         if(not self.IsDrawing):
             for rect in self.ListRect:
                 x0, y0, x1, y1 = self.PhotoCanvas.coords(rect[0])
-                if(x > x0 and x < x1 and y > y0 and y < y1):
+                if(x >= x0 and x <= x1 and y >= y0 and y <= y1):
+                    if(y <= y0+self.rangeResize or y >= y1-self.rangeResize): self.config(cursor="sb_v_double_arrow")
+                    elif(x <= x0+self.rangeResize or x >= x1-self.rangeResize): self.config(cursor="sb_h_double_arrow")
+                    else: self.config(cursor="fleur")
                     self.selectedRect = rect
                     self.PhotoCanvas.focus(rect[0])
                     self.PhotoCanvas.focus(rect[1])
@@ -183,6 +178,32 @@ class Interface(tk.Tk):
                     outline='black', tags=objectClass)
                 text = self.PhotoCanvas.create_text(self.tmpBB[1][0] - 15, self.tmpBB[1][1] + 5, text=objectClass, font=("Arial", 10), fill='black')
                 self.ListRect.append([rect, text])
+                
+    def leftClickRelease(self, event):
+        self.config(cursor="arrow")
+                
+    def dragClick(self, event):
+        if(not self.IsDrawing and self.selectedRect[0] != 0):
+            x, y = event.x, event.y
+            distx = x - self.posx; disty = y - self.posy
+            x0, y0, x1, y1 = self.PhotoCanvas.coords(self.selectedRect[0])
+            x2, y2 = self.PhotoCanvas.coords(self.selectedRect[1])
+            if(self.posx >= x0 and self.posx <= x1 and self.posy >= y0 and self.posy <= y0+self.rangeResize):
+                self.PhotoCanvas.coords(self.selectedRect[0], x0, y0+disty, x1, y1)
+                self.PhotoCanvas.coords(self.selectedRect[1], x2, y2)
+            elif(self.posx >= x0 and self.posx <= x1 and self.posy >= y1-self.rangeResize and self.posy <= y1):
+                self.PhotoCanvas.coords(self.selectedRect[0], x0, y0, x1, y1+disty)
+                self.PhotoCanvas.coords(self.selectedRect[1], x2, y2+disty)
+            elif(self.posx >= x0 and self.posx <= x0+self.rangeResize and self.posy >= y0 and self.posy <= y1):
+                self.PhotoCanvas.coords(self.selectedRect[0], x0+distx, y0, x1, y1)
+                self.PhotoCanvas.coords(self.selectedRect[1], x2, y2)
+            elif(self.posx >= x1-self.rangeResize and self.posx <= x1 and self.posy >= y0 and self.posy <= y1):
+                self.PhotoCanvas.coords(self.selectedRect[0], x0, y0, x1+distx, y1)
+                self.PhotoCanvas.coords(self.selectedRect[1], x2+distx, y2)
+            else:
+                self.PhotoCanvas.coords(self.selectedRect[0], x0+distx, y0+disty, x1+distx, y1+disty)
+                self.PhotoCanvas.coords(self.selectedRect[1], x2+distx, y2+disty)
+            self.posx = x; self.posy = y
             
     def resetBB(self):
         for rect in self.ListRect:
@@ -284,13 +305,13 @@ class Interface(tk.Tk):
             n = gfg.Element("bndbox")
             m.append(n)
             f1 = gfg.SubElement(n, "xmin")
-            f1.text = str(x0)
+            f1.text = str(int(x0))
             f2 = gfg.SubElement(n, "ymin")
-            f2.text = str(y0)
+            f2.text = str(int(y0))
             f3 = gfg.SubElement(n, "xmax")
-            f3.text = str(x1)
+            f3.text = str(int(x1))
             f4 = gfg.SubElement(n, "ymax")
-            f4.text = str(y1)
+            f4.text = str(int(y1))
             
         tree = gfg.ElementTree(root)
         with open (os.getcwd()+'/PascalVOC_XML/'+self.ListFile[self.IndexPhoto]+'.xml', "wb") as files :
