@@ -22,7 +22,7 @@ class Interface(tk.Tk):
         self.IsDrawing = False
         self.ListFile = []
         self.WorkingDir = os.getcwd()
-        self.rangeResize = 10 #Local variable in px
+        self.rangeResize = 10
         boolTmp = False
         for file in os.listdir(os.getcwd()):
             if(file == 'annotations.csv'):
