@@ -267,7 +267,7 @@ class Interface(tk.Tk):
         b1 = gfg.SubElement(root, "folder")
         b1.text = dirTmp
         b2 = gfg.SubElement(root, "filename")
-        b2.text = self.ListFile[self.IndexPhoto]
+        b2.text = self.ListFile[self.IndexPhoto][:-4]
         b3 = gfg.SubElement(root, "path")
         b3.text = self.WorkingDir+'/'+self.ListFile[self.IndexPhoto]
         
@@ -314,7 +314,7 @@ class Interface(tk.Tk):
             f4.text = str(int(y1))
             
         tree = gfg.ElementTree(root)
-        with open (os.getcwd()+'/PascalVOC_XML/'+self.ListFile[self.IndexPhoto]+'.xml', "wb") as files :
+        with open (os.getcwd()+'/PascalVOC_XML/'+self.ListFile[self.IndexPhoto][:-4]+'.xml', "wb") as files :
             tree.write(files)
             
     def showImage(self):
