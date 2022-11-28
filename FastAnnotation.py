@@ -356,6 +356,7 @@ class Interface(tk.Tk):
         
     def enterKey(self, event):
         self.validateBB()
+        if(len(self.ListFile) > 0): self.GenerateCSV_KP()
         
     def validateBB(self):
         if(len(self.ListFile) > 0):
