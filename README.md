@@ -16,19 +16,23 @@ Left Arrow, Right Arrow and Enter key are also supported for faster navigation.
 Let's see an example:
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/65224852/153765919-7876617e-25a1-4e9a-a961-427efe8c8cdb.PNG">
+<img src="https://user-images.githubusercontent.com/65224852/204236943-775d28a5-5db3-42e4-9bf5-c0178d8ec569.png">
 </p>
 
-And this is how the result look for the CSV File:
+And this is how the result look for both CSV files *(bounding boxes and key points)*:
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/65224852/160229591-8d61638b-3c81-44d3-a4f9-f403d9973f34.PNG">
+<img src="https://user-images.githubusercontent.com/65224852/204236990-2fa52d18-493d-4d2e-ac01-b8c8bd6c2f6b.png">
+</p>
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/65224852/204236984-a0b3cf4c-00b7-4658-9b63-a99caebcf57b.png">
 </p>
 
 And (a part of) the result for the XML File:
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/65224852/187079731-fc167e28-6356-459a-aa9f-b3d2282b94d6.png">
+<img src="https://user-images.githubusercontent.com/65224852/204237000-c5c3f5b3-e277-43ec-ba7b-f58cf9cb6f9a.png">
 </p>
 
 ## Requirements
