@@ -272,7 +272,7 @@ class Interface(tk.Tk):
                 self.PhotoCanvas.delete(self.listKP[self.IsDrawingKP][4][2])
             self.listKP[self.IsDrawingKP][4] = [self.PhotoCanvas.create_line(x+5, y+5, x-5, y-5, fill="green", width="2"),
                 self.PhotoCanvas.create_line(x+5, y-5, x-5, y+5, fill="green", width="2"),
-                self.PhotoCanvas.create_text(x, y+10, text=self.listKP[self.IsDrawingKP][1].get(), font=("Arial", 10), fill='black')]
+                self.PhotoCanvas.create_text(x, y+10, text=self.listKP[self.IsDrawingKP][1].get(), font=("Arial", 10), fill='green')]
             self.listKP[self.IsDrawingKP][0] = [x, y]
             self.listKP[self.IsDrawingKP][2].configure(state='normal')
             self.listKP[self.IsDrawingKP][2].delete(0,tk.END)
@@ -496,7 +496,7 @@ class Interface(tk.Tk):
             self.listKP[i][0][1] = y
             self.listKP[i][4] = [self.PhotoCanvas.create_line(x+5, y+5, x-5, y-5, fill="green", width="2"),
                 self.PhotoCanvas.create_line(x+5, y-5, x-5, y+5, fill="green", width="2"),
-                self.PhotoCanvas.create_text(x, y+10, text=name, font=("Arial", 10), fill='black')]
+                self.PhotoCanvas.create_text(x, y+10, text=name, font=("Arial", 10), fill='green')]
             self.listKP[i][0] = [x, y]
             self.listKP[i][1].delete(0,tk.END)
             self.listKP[i][1].insert(0, name)
