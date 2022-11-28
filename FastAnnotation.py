@@ -42,8 +42,6 @@ class Interface(tk.Tk):
         self.tmpBB = [(-1, -1), (-1, -1)]; self.ListRect = []
         self.iconDir = tk.PhotoImage(file='icons/directoryIcon.png')
         self.iconDustbin = tk.PhotoImage(file='icons/dustbin.png')
-        self.iconPen = tk.PhotoImage(file='icons/pen.png')
-        self.iconTarget = tk.PhotoImage(file='icons/target.png')
         self.colorList = ['red', 'blue', 'orange', 'purple', 'brown', 'green', 'pink', 'teal', 'yellow', 'grey']
         self.selectedRect = 0
         self.selectedCross = -1
