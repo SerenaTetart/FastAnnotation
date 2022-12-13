@@ -240,6 +240,7 @@ class Interface(tk.Tk):
                 if(x >= x0-RANGERESIZE and x <= x0+RANGERESIZE and y >= y0-RANGERESIZE and y <= y0+RANGERESIZE):
                     self.config(cursor="fleur")
                     self.selectedCross = i
+                    break
             for rect in self.ListRect:
                 x0, y0, x1, y1 = self.PhotoCanvas.coords(rect[0])
                 if(x >= x0 and x <= x1 and y >= y0 and y <= y1):
@@ -298,7 +299,7 @@ class Interface(tk.Tk):
             self.PhotoCanvas.coords(self.listKP[self.selectedCross][4][0], x00+distx, y00+disty, x01+distx, y01+disty)
             self.PhotoCanvas.coords(self.listKP[self.selectedCross][4][1], x10+distx, y10+disty, x11+distx, y11+disty)
             self.PhotoCanvas.coords(self.listKP[self.selectedCross][4][2], x2+distx, y2+disty)
-            self.listKP[self.selectedCross][0] = [x, y]
+            self.listKP[self.selectedCross][0] = [x00+distx-5, y00+disty-5]
             self.listKP[self.selectedCross][2].configure(state='normal')
             self.listKP[self.selectedCross][2].delete(0,tk.END)
             self.listKP[self.selectedCross][2].insert(0, "("+str(x)+", "+str(y)+")")
